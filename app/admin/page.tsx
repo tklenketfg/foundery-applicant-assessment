@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import type { Submission } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
+
+type SubmissionRow = Awaited<ReturnType<typeof prisma.submission.findMany>>[number];
 
 export default async function AdminPage({ searchParams }: { searchParams: Record<string, string | string[] | undefined> }) {
   if (!requireAdmin()) redirect("/admin/login");
@@ -11,7 +12,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Record
   const minScore = typeof searchParams.minScore === "string" ? Number(searchParams.minScore) : undefined;
   const q = typeof searchParams.q === "string" ? searchParams.q : undefined;
 
-  const submissions: Submission[] = await prisma.submission.findMany({
+  const submissions: SubmissionRow[] = await prisma.submission.findMany({
     where: {
       ...(status ? { status: status as any } : {}),
       ...(minScore ? { totalScore: { gte: minScore } } : {}),
