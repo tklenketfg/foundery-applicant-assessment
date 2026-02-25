@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum SubmissionStatus {
+  NEW
+  REVIEWING
+  PASS
+  MAYBE
+  NO
+  ARCHIVED
+}
+
+model Submission {
+  id           String           @id @default(cuid())
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  name         String
+  email        String
+  phone        String
+  location     String
+  linkedin     String?
+  referral     String?
+  resumeUrl    String?
+  answers      Json
+  rubricScores Json
+  totalScore   Int
+  flags        Json
+  status       SubmissionStatus @default(NEW)
+  adminNotes   String?
+  ipHash       String?
+  userAgent    String?
+}
